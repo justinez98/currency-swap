@@ -150,7 +150,3 @@ The application follows a **layered architecture** with clear separation of conc
 3. **User Experience**: Smooth interactions even during rapid input
 4. **Maintainability**: Clear structure makes code easy to understand and modify
 5. **Type Safety**: TypeScript ensures correctness at compile time
-
-### Detailed Documentation
-
-For in-depth technical details and implementation justifications, see [ARCHITECTURE.md](./ARCHITECTURE.md).
