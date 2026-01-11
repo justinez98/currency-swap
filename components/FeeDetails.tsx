@@ -68,9 +68,26 @@ export const FeeDetails = memo(function FeeDetails({
         setIsRateReversed(!isRateReversed);
     };
 
+    const handleContainerClick = () => {
+        setIsExpanded(!isExpanded);
+    };
+
     return (
         <div className="mt-4 bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden">
-            <div className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-800/50 transition-colors">
+            <div 
+                className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-800/50 transition-colors cursor-pointer"
+                onClick={handleContainerClick}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleContainerClick();
+                    }
+                }}
+                aria-expanded={isExpanded}
+                aria-label={isExpanded ? "Collapse details" : "Expand details"}
+            >
                 <div className="flex items-center gap-2 flex-1">
                     <span className="text-sm text-gray-400">Rate</span>
                     <button
@@ -94,13 +111,7 @@ export const FeeDetails = memo(function FeeDetails({
                         </svg>
                     </button>
                 </div>
-                <button
-                    type="button"
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="flex items-center gap-2"
-                    aria-expanded={isExpanded}
-                    aria-label={isExpanded ? "Collapse details" : "Expand details"}
-                >
+                <div className="flex items-center gap-2">
                     <svg
                         className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
                             }`}
@@ -115,7 +126,7 @@ export const FeeDetails = memo(function FeeDetails({
                             d="M19 9l-7 7-7-7"
                         />
                     </svg>
-                </button>
+                </div>
             </div>
 
             {isExpanded && (

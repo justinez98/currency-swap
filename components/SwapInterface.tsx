@@ -18,6 +18,7 @@ export function SwapInterface() {
         outputAmount,
         lastEdited,
         isCalculating,
+        calculationTimeout,
         error,
         showReceipt,
         setFromCurrency,
@@ -94,7 +95,7 @@ export function SwapInterface() {
                     amount={inputAmount}
                     onCurrencyChange={setFromCurrency}
                     onAmountChange={setInputAmount}
-                    disabled={false}
+                    disabled={(isCalculating || calculationTimeout !== null) && lastEdited === "output"}
                     isCalculating={isCalculating && lastEdited === "input"}
                     error={lastEdited === "input" ? error : null}
                 />
@@ -109,7 +110,7 @@ export function SwapInterface() {
                     amount={outputAmount}
                     onCurrencyChange={setToCurrency}
                     onAmountChange={setOutputAmount}
-                    disabled={false}
+                    disabled={(isCalculating || calculationTimeout !== null) && lastEdited === "input"}
                     isCalculating={isCalculating && lastEdited === "output"}
                     error={lastEdited === "output" ? error : null}
                     inputUSDValue={inputUSDValue}

@@ -5,16 +5,16 @@ import { Currency, CurrencyInfo } from "@/types/currency";
  * All conversions go through USD as the base currency
  */
 export const CURRENCY_RATES: Record<Currency, number> = {
-    [Currency.USD]: 1.000000,
+    [Currency.USD]: 1.0,
     [Currency.HKD]: 7.798926,
     [Currency.AUD]: 1.487089,
-    [Currency.MYR]: 4.375000,
+    [Currency.MYR]: 4.375,
     [Currency.GBP]: 0.761538,
     [Currency.EUR]: 0.899038,
     [Currency.IDR]: 15538.905259,
     [Currency.NZD]: 1.625053,
-    [Currency.CNY]: 7.136900,
-    [Currency.CZK]: 22.549000,
+    [Currency.CNY]: 7.1369,
+    [Currency.CZK]: 22.549,
     [Currency.AED]: 3.672815,
 };
 

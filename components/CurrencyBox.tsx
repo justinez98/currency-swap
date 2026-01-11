@@ -86,10 +86,12 @@ export const CurrencyBox = memo(function CurrencyBox({
                 relative p-4 rounded-xl border transition-all duration-200
                 ${error
                     ? "border-red-500/50 bg-red-950/20"
+                    : disabled && !isCalculating
+                    ? "border-gray-700/50 bg-gray-900/30"
                     : "border-gray-800 bg-gray-900/50"
                 }
-                hover:border-gray-700
-                focus-within:border-[#00ff88]/50
+                ${disabled && !isCalculating ? "" : "hover:border-gray-700"}
+                ${disabled && !isCalculating ? "" : "focus-within:border-[#00ff88]/50"}
             `}
         >
             {/* Label */}
@@ -155,12 +157,17 @@ export const CurrencyBox = memo(function CurrencyBox({
                             }}
                             className={`
                                 w-full font-bold bg-transparent
-                                text-white text-right
+                                text-right
                                 placeholder-gray-600
                                 focus:outline-none
                                 whitespace-nowrap
-                                ${disabled ? "cursor-not-allowed opacity-50" : ""}
-                                ${error ? "text-red-400" : ""}
+                                ${disabled 
+                                    ? "cursor-not-allowed text-gray-500 opacity-70" 
+                                    : error 
+                                    ? "text-red-400" 
+                                    : "text-white"
+                                }
+                                transition-colors duration-200
                             `}
                         />
                     </div>
@@ -168,18 +175,18 @@ export const CurrencyBox = memo(function CurrencyBox({
                     {usdEquivalent && (
                         <div className="mt-1 relative w-full min-w-0">
                             <div
-                                className={`text-sm text-gray-500 text-right flex flex-wrap justify-end gap-x-2 ${isOutput && percentageDiff ? "cursor-help" : ""
-                                    }`}
-                                onMouseEnter={() => isOutput && percentageDiff && setShowTooltip(true)}
+                                className={`text-sm text-right flex flex-wrap justify-end gap-x-2 ${isOutput && percentageDiff ? "cursor-help" : ""
+                                    } ${disabled ? "text-gray-500 opacity-60" : "text-gray-500"} transition-colors duration-200`}
+                                onMouseEnter={() => isOutput && percentageDiff && !disabled && setShowTooltip(true)}
                                 onMouseLeave={() => setShowTooltip(false)}
                             >
                                 <span>{usdEquivalent}</span>
                                 {isOutput && percentageDiff && (
                                     <span
-                                        className={`text-gray-400 ${showTooltip
+                                        className={`${disabled ? "text-gray-500 opacity-60" : "text-gray-400"} ${showTooltip
                                             ? "underline decoration-dotted underline-offset-2"
                                             : ""
-                                            }`}
+                                            } transition-colors duration-200`}
                                     >
                                         ({((percentageDiff.value / (inputUSDValue || 1)) * 100) >= 0 ? "+" : ""}
                                         {formatAmountWithSeparators(
@@ -222,7 +229,7 @@ export const CurrencyBox = memo(function CurrencyBox({
                     )}
                 </div>
             </div>
-            <div className="mt-2 text-sm text-gray-500">
+            <div className={`mt-2 text-sm transition-colors duration-200 ${disabled ? "text-gray-500 opacity-60" : "text-gray-500"}`}>
                 {currencyInfo.name}
             </div>
         </div>

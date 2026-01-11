@@ -100,10 +100,57 @@ The app validates all inputs:
 
 ## Architecture
 
-### State Management
+### Overview
 
-Using Zustand for global state and URL parameters for shareable links. This gives us:
+The application follows a **layered architecture** with clear separation of concerns:
 
-- Fast state updates without provider overhead
-- Shareable links that work on refresh
-- Browser navigation support
+```
+┌─────────────────────────────────────┐
+│         Presentation Layer          │
+│    (Components, Pages, UI)          │
+└─────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────┐
+│         Business Logic Layer        │
+│    (Store, Hooks, Utilities)        │
+└─────────────────────────────────────┘
+                  ↓
+┌─────────────────────────────────────┐
+│         Data Layer                  │
+│    (Constants, Types, Config)       │
+└─────────────────────────────────────┘
+```
+
+### Architecture Decisions
+
+| Decision                                  | Rationale                                                                    |
+| ----------------------------------------- | ---------------------------------------------------------------------------- |
+| **Layered Architecture**                  | Clear separation of concerns enables maintainability and testability         |
+| **Zustand State Management**              | Lightweight, performant eas                                                  |
+| **URL Synchronization**                   | Enables shareable links, browser history support, and refresh persistence    |
+| **Multi-Layer Race Condition Prevention** | Prevents incorrect calculations and UI flickering during rapid input         |
+| **Reverse Calculation**                   | Provides flexible user experience allowing edits from either direction       |
+| **Multi-Layer Validation**                | Ensures data integrity while maintaining smooth typing experience            |
+| **Mobile-First Design**                   | Prioritizes the most constrained environment for better cross-device support |
+| **Performance Optimizations**             | Memoization, debouncing, and cleanup ensure smooth user experience           |
+
+### Key Technical Patterns
+
+- **Debouncing**: 300ms delays for calculations and URL updates
+- **Last Edited Tracking**: Prevents race conditions in bidirectional editing
+- **Action-Based State Updates**: All state changes go through store actions
+- **Component Memoization**: React.memo() and useMemo() prevent unnecessary re-renders
+- **Error Boundaries**: Centralized error state with clear UI feedback
+- **Responsive Design**: Mobile-first approach with Tailwind breakpoints
+
+### Core Principles
+
+1. **Separation of Concerns**: Each layer has a single responsibility
+2. **Performance First**: Optimizations prevent unnecessary work
+3. **User Experience**: Smooth interactions even during rapid input
+4. **Maintainability**: Clear structure makes code easy to understand and modify
+5. **Type Safety**: TypeScript ensures correctness at compile time
+
+### Detailed Documentation
+
+For in-depth technical details and implementation justifications, see [ARCHITECTURE.md](./ARCHITECTURE.md).

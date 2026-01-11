@@ -150,6 +150,8 @@ export const useSwapStore = create<SwapState>((set, get) => ({
                 const currentState = get();
                 // Only calculate if input is still the last edited field
                 if (currentState.lastEdited === "input") {
+                    // Clear timeout before calculating
+                    set({ calculationTimeout: null });
                     currentState.calculateOutput();
                 }
             }, CALCULATION_DEBOUNCE_MS);
@@ -200,6 +202,8 @@ export const useSwapStore = create<SwapState>((set, get) => ({
                 const currentState = get();
                 // Only calculate if output is still the last edited field
                 if (currentState.lastEdited === "output") {
+                    // Clear timeout before calculating
+                    set({ calculationTimeout: null });
                     currentState.calculateInput();
                 }
             }, CALCULATION_DEBOUNCE_MS);
@@ -254,16 +258,21 @@ export const useSwapStore = create<SwapState>((set, get) => ({
                     outputAmount: formatted,
                     isCalculating: false,
                     error: null,
+                    calculationTimeout: null, // Clear timeout when calculation completes
                 });
             } else {
                 // State changed during calculation, reset isCalculating
-                set({ isCalculating: false });
+                set({ 
+                    isCalculating: false,
+                    calculationTimeout: null, // Clear timeout when calculation completes
+                });
             }
         } catch (error) {
             set({
                 error: error instanceof Error ? error.message : "Conversion error. Please try again.",
                 isCalculating: false,
                 outputAmount: "",
+                calculationTimeout: null, // Clear timeout on error
             });
         }
     },
@@ -312,16 +321,21 @@ export const useSwapStore = create<SwapState>((set, get) => ({
                     inputAmount: formatted,
                     isCalculating: false,
                     error: null,
+                    calculationTimeout: null, // Clear timeout when calculation completes
                 });
             } else {
                 // State changed during calculation, reset isCalculating
-                set({ isCalculating: false });
+                set({ 
+                    isCalculating: false,
+                    calculationTimeout: null, // Clear timeout when calculation completes
+                });
             }
         } catch (error) {
             set({
                 error: error instanceof Error ? error.message : "Conversion error. Please try again.",
                 isCalculating: false,
                 inputAmount: "",
+                calculationTimeout: null, // Clear timeout on error
             });
         }
     },
