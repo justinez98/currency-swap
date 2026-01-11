@@ -1,5 +1,8 @@
 # Currency Swap Website
 
+<img width="406" height="751" alt="Screenshot 2026-01-11 at 11 12 54 PM" src="https://github.com/user-attachments/assets/49fed6a5-f0fa-4206-ac2d-1a9edc7c74d5" />
+<img width="881" height="572" alt="Screenshot 2026-01-11 at 10 39 38 PM" src="https://github.com/user-attachments/assets/16abedcb-2767-4ffe-8355-71d29a892eef" />
+
 A currency conversion tool built with Next.js and React. Convert between 11 currencies with real-time calculations.
 
 ## Tech Stack
