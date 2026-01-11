@@ -79,9 +79,13 @@ export const useSwapStore = create<SwapState>((set, get) => ({
             set({ calculationTimeout: null });
         }
 
-        set({ fromCurrency: currencyEnum, error: null });
-        // Recalculate based on last edited field
-        state.calculateBasedOnLastEdited();
+        // When changing input currency, keep input amount and recalculate output
+        // Update lastEdited to "input" to ensure calculateOutput() works correctly
+        set({ fromCurrency: currencyEnum, error: null, lastEdited: "input" });
+        if (state.inputAmount) {
+            const updatedState = get();
+            updatedState.calculateOutput();
+        }
     },
 
     setToCurrency: (currency: Currency | string) => {
@@ -105,9 +109,20 @@ export const useSwapStore = create<SwapState>((set, get) => ({
             set({ calculationTimeout: null });
         }
 
-        set({ toCurrency: currencyEnum, error: null });
-        // Recalculate based on last edited field
-        state.calculateBasedOnLastEdited();
+        // When changing output currency, keep output amount and recalculate input
+        // Update lastEdited to "output" to ensure calculateInput() works correctly
+        if (state.outputAmount) {
+            set({ toCurrency: currencyEnum, error: null, lastEdited: "output" });
+            const updatedState = get();
+            updatedState.calculateInput();
+        } else if (state.inputAmount) {
+            // If no output amount, calculate from input
+            set({ toCurrency: currencyEnum, error: null, lastEdited: "input" });
+            const updatedState = get();
+            updatedState.calculateOutput();
+        } else {
+            set({ toCurrency: currencyEnum, error: null });
+        }
     },
 
     setInputAmount: (amount: string, skipCalculation = false) => {
@@ -360,32 +375,29 @@ export const useSwapStore = create<SwapState>((set, get) => ({
 
     swapCurrencies: () => {
         const state = get();
-        const { fromCurrency, toCurrency, inputAmount, outputAmount, calculationTimeout, lastEdited } = state;
+        const { fromCurrency, toCurrency, inputAmount, calculationTimeout } = state;
 
         // Clear any pending calculations
         if (calculationTimeout) {
             clearTimeout(calculationTimeout);
         }
 
-        // Swap currencies and amounts, flip lastEdited
-        const newLastEdited = lastEdited === "input" ? "output" : "input";
-
+        // Swap only currencies, keep input amount and recalculate output
         set({
             fromCurrency: toCurrency,
             toCurrency: fromCurrency,
-            inputAmount: outputAmount,
-            outputAmount: inputAmount,
-            lastEdited: newLastEdited,
+            lastEdited: "input", // Keep input as the source of truth
             calculationTimeout: null,
         });
 
-        // Recalculate after swap based on new lastEdited
-        // Use requestAnimationFrame for better timing than arbitrary setTimeout
+        // Recalculate output based on the swapped currencies and existing input amount
         requestAnimationFrame(() => {
             const currentState = get();
-            // Only recalculate if state hasn't changed significantly
-            if (currentState.lastEdited === newLastEdited) {
-                currentState.calculateBasedOnLastEdited();
+            if (currentState.inputAmount) {
+                currentState.calculateOutput();
+            } else {
+                // If no input amount, clear output
+                set({ outputAmount: "" });
             }
         });
     },
