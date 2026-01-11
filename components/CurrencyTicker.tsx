@@ -3,28 +3,22 @@
 import { useState, useMemo, memo } from "react";
 import Marquee from "react-fast-marquee";
 import { Currency } from "@/types/currency";
-import { getCurrencyCodes, CURRENCY_INFO } from "@/utils/currencies";
-import { convertCurrency } from "@/utils/conversion";
+import { getCurrencyCodes, CURRENCY_INFO, CURRENCY_RATES } from "@/utils/currencies";
 import { formatAmountWithSeparators } from "@/utils/conversion";
 
 export const CurrencyTicker = memo(function CurrencyTicker() {
     const [showTooltip, setShowTooltip] = useState(false);
 
-    // Memoize currency rates calculation - rates are static, so only calculate once
+    // Display raw rates from spec (1 USD = X units of currency)
     const currencyRates = useMemo(() => {
         const currencies = getCurrencyCodes();
         return currencies.map((code) => {
-            try {
-                const usdRate = code === Currency.USD ? 1 : convertCurrency(1, code, Currency.USD, false);
-                return {
-                    code,
-                    name: CURRENCY_INFO[code].name,
-                    usdRate,
-                };
-            } catch {
-                return null;
-            }
-        }).filter((item): item is { code: Currency; name: string; usdRate: number; } => item !== null);
+            return {
+                code,
+                name: CURRENCY_INFO[code].name,
+                rate: CURRENCY_RATES[code],
+            };
+        });
     }, []);
 
     return (
@@ -55,7 +49,7 @@ export const CurrencyTicker = memo(function CurrencyTicker() {
                         <div
                             className="absolute bottom-full left-0 mb-2 px-3 py-2 bg-gray-800 rounded-lg shadow-xl border border-gray-700 text-xs text-gray-300 whitespace-nowrap z-[9999] pointer-events-none opacity-100"
                         >
-                            Rates shown are relative to USD (US Dollar)
+                            Rates shown: 1 USD = X units of currency
                             <div className="absolute top-full left-4 -mt-1">
                                 <div className="w-2 h-2 bg-gray-800 border-r border-b border-gray-700 rotate-45"></div>
                             </div>
@@ -83,7 +77,7 @@ export const CurrencyTicker = memo(function CurrencyTicker() {
                                     {currency.code}
                                 </span>
                                 <span className="text-xs text-gray-400">
-                                    ${formatAmountWithSeparators(currency.usdRate, 5)}
+                                    {formatAmountWithSeparators(currency.rate, 6)}
                                 </span>
                             </div>
                         </div>
